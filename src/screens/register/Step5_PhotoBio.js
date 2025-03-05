@@ -22,7 +22,7 @@ const Step5_PhotoBio = ({ route, navigation }) => {
   };
 
   const handleNext = () => {
-    navigation.navigate('Step6_TermsAndConditions', {
+    navigation.navigate('Step6_Location', {
       username,
       firstName,
       lastName,

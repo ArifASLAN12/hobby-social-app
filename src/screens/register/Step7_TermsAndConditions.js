@@ -2,10 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const Step6_TermsAndConditions = ({ navigation }) => {
+const Step7_TermsAndConditions = ({ route, navigation }) => {
+  const { username, firstName, lastName, email, password, birthday, gender, bio, profileImage, location } = route.params;
+
   const handleFinish = () => {
     // Kayıt işlemi tamamlandıktan sonra yapılacak işlemler
-    navigation.navigate('Login'); // Giriş ekranına yönlendirme
+    navigation.navigate('Home'); // Giriş ekranına yönlendirme
   };
 
   return (
@@ -92,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Step6_TermsAndConditions;
+export default Step7_TermsAndConditions;
