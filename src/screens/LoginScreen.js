@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image } from 'react-native';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,7 +17,7 @@ const LoginScreen = () => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Kullanıcı adı, e-posta veya telefon"
+          placeholder="Kullanıcı adı veya e-posta"
           placeholderTextColor="#aaa"
           value={username}
           onChangeText={setUsername}
@@ -40,7 +40,7 @@ const LoginScreen = () => {
       </TouchableOpacity>
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Hesabın yok mu?</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Step1_Username')}>
           <Text style={styles.registerLink}> Kaydol</Text>
         </TouchableOpacity>
       </View>

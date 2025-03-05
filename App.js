@@ -1,17 +1,27 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Splash from './src/screens/SplashScreen'; // Splash bileşenini ekleyin
-import Login from './src/screens/LoginScreen'; 
+import LoginScreen from './src/screens/LoginScreen';
+import Step1_Username from './src/screens/register/Step1_Username';
+import Step2_FullName from './src/screens/register/Step2_FullName';
+import Step3_EmailPassword from './src/screens/register/Step3_EmailPassword';
+import Step4_BirthdayGender from './src/screens/register/Step4_BirthdayGender';
+import Step5_PhotoBio from './src/screens/register/Step5_PhotoBio';
+import Step6_TermsAndConditions from './src/screens/register/Step6_TermsAndConditions';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="Login" component={Login} /> 
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Step1_Username" component={Step1_Username} />
+        <Stack.Screen name="Step2_FullName" component={Step2_FullName} />
+        <Stack.Screen name="Step3_EmailPassword" component={Step3_EmailPassword} />
+        <Stack.Screen name="Step4_BirthdayGender" component={Step4_BirthdayGender} />
+        <Stack.Screen name="Step5_PhotoBio" component={Step5_PhotoBio} />
+        <Stack.Screen name="Step6_TermsAndConditions" component={Step6_TermsAndConditions} />
       </Stack.Navigator>
     </NavigationContainer>
   );
