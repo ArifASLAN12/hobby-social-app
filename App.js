@@ -11,6 +11,8 @@ import Step5_PhotoBio from './src/screens/register/Step5_PhotoBio';
 import Step6_Location from './src/screens/register/Step6_Location';
 import Step7_TermsAndConditions from './src/screens/register/Step7_TermsAndConditions';
 import Home from './src/screens/HomeScreen';
+import Welcome from './src/screens/WelcomeScreen';
+
 
 
 const Stack = createStackNavigator();
@@ -29,6 +31,8 @@ export default function App() {
         <Stack.Screen name="Step6_Location" component={Step6_Location} />
         <Stack.Screen name="Step7_TermsAndConditions" component={Step7_TermsAndConditions} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Welcome" component={Welcome} />
+
 
       </Stack.Navigator>
     </NavigationContainer>

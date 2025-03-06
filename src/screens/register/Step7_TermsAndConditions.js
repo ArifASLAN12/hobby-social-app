@@ -7,7 +7,7 @@ const Step7_TermsAndConditions = ({ route, navigation }) => {
 
   const handleFinish = () => {
     // Kayıt işlemi tamamlandıktan sonra yapılacak işlemler
-    navigation.navigate('Home'); // Giriş ekranına yönlendirme
+    navigation.navigate('Welcome'); // Giriş ekranına yönlendirme
   };
 
   return (
