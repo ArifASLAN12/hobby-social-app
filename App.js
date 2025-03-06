@@ -12,6 +12,8 @@ import Step6_Location from './src/screens/register/Step6_Location';
 import Step7_TermsAndConditions from './src/screens/register/Step7_TermsAndConditions';
 import Home from './src/screens/HomeScreen';
 import Welcome from './src/screens/WelcomeScreen';
+import CategorySelection from './src/screens/CategorySelectionScreen';
+
 
 
 
@@ -32,6 +34,8 @@ export default function App() {
         <Stack.Screen name="Step7_TermsAndConditions" component={Step7_TermsAndConditions} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="CategorySelection" component={CategorySelection} />
+
 
 
       </Stack.Navigator>

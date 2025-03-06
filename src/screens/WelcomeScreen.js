@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
 const WelcomeScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate('Home'); // Ana ekran
+      navigation.navigate('CategorySelection'); // Ana ekran
     }, 3000);
 
     return () => clearTimeout(timer);
