@@ -1,13 +1,18 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, CheckBox } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const Step7_TermsAndConditions = ({ route, navigation }) => {
   const { username, firstName, lastName, email, password, birthday, gender, bio, profileImage, location } = route.params;
+  const [isAgreed, setIsAgreed] = useState(false);
 
   const handleFinish = () => {
-    // Kayıt işlemi tamamlandıktan sonra yapılacak işlemler
-    navigation.navigate('Welcome'); // Giriş ekranına yönlendirme
+    if (isAgreed) {
+      // Kayıt işlemi tamamlandıktan sonra yapılacak işlemler
+      navigation.navigate('Welcome'); // Giriş ekranına yönlendirme
+    } else {
+      alert('Kullanım şartlarını kabul etmeniz gerekmektedir.');
+    }
   };
 
   return (
@@ -30,9 +35,10 @@ const Step7_TermsAndConditions = ({ route, navigation }) => {
           {"\n\n"}
           4. Uygulamayı kullanarak, bu şartları kabul etmiş olursunuz.
         </Text>
-        <Text style={styles.agreement}>
-          Kullanım şartlarını ve gizlilik politikasını kabul ediyorum.
-        </Text>
+        <View style={styles.checkboxContainer}>
+          <CheckBox value={isAgreed} onValueChange={setIsAgreed} />
+          <Text style={styles.agreement}>Kullanım şartlarını ve gizlilik politikasını kabul ediyorum.</Text>
+        </View>
       </ScrollView>
       <TouchableOpacity style={styles.button} onPress={handleFinish}>
         <Text style={styles.buttonText}>Kayıt Ol</Text>
@@ -68,11 +74,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   agreement: {
     color: 'white',
     fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
+    marginLeft: 10,
   },
   button: {
     backgroundColor: '#0095F6',

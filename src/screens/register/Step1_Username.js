@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import authService from '../services/authService';  // authService'i dahil et
 
 const Step1_Username = ({ navigation }) => {
   const [username, setUsername] = useState('');
+  const [error, setError] = useState(''); // Hata mesajları için durum ekleyelim
 
-  const handleNext = () => {
-    navigation.navigate('Step2_FullName', { username });
+  const handleNext = async () => {
+    if (username.trim() === '') {
+      setError('Kullanıcı adı boş olamaz!');  // Hata kontrolü ekledik
+      return;
+    }
+
+    try {
+      // Backend'e kullanıcı adı ile kaydederken authService'i kullanıyoruz
+      const userData = { username };  // Model oluşturuluyor
+      await authService.register(userData); // Kullanıcı kaydını yapıyoruz
+
+      // Eğer başarılıysa, kullanıcıyı bir sonraki adıma yönlendiriyoruz
+      navigation.navigate('Step2_FullName', { username });
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');  // Hata mesajı
+    }
   };
 
   return (
@@ -27,6 +43,10 @@ const Step1_Username = ({ navigation }) => {
       <Text style={styles.subtitle}>
         Başlamak için kullanıcı adınızı seçin. Bu, sizinle sohbet etmek için kullanılacaktır.
       </Text>
+
+      {/* Hata mesajı */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Devam Et</Text>
       </TouchableOpacity>
@@ -85,6 +105,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

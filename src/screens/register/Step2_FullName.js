@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import authService from '../services/authService';  // authService'i dahil et
 
 const Step2_FullName = ({ route, navigation }) => {
   const { username } = route.params;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [error, setError] = useState(''); // Hata mesajları için durum ekleyelim
 
-  const handleNext = () => {
-    navigation.navigate('Step3_EmailPassword', { username, firstName, lastName });
+  const handleNext = async () => {
+    if (firstName.trim() === '' || lastName.trim() === '') {
+      setError('İsim ve Soyisim boş olamaz!');
+      return;
+    }
+
+    try {
+      // Backend'e isim ve soyisimle kaydederken authService'i kullanıyoruz
+      const userData = { username, firstName, lastName };  // Model oluşturuluyor
+      await authService.register(userData); // Kullanıcı kaydını yapıyoruz
+
+      // Eğer başarılıysa, kullanıcıyı bir sonraki adıma yönlendiriyoruz
+      navigation.navigate('Step3_EmailPassword', { username, firstName, lastName });
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');  // Hata mesajı
+    }
   };
 
   return (
@@ -34,6 +50,10 @@ const Step2_FullName = ({ route, navigation }) => {
         onChangeText={setLastName}
         autoCapitalize="words"
       />
+      
+      {/* Hata mesajı */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Devam Et</Text>
       </TouchableOpacity>
@@ -86,6 +106,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image, Alert } from 'react-native';
+import authService from '../../services/authService'; // authService'yi import et
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    console.log("Giriş yapılıyor:", username, password);
+  const handleLogin = async () => {
+    try {
+      const response = await authService.login(username, password); // Login fonksiyonunu çağır
+      if (response.token) {
+        // Login başarılı ise, ana ekrana yönlendir
+        Alert.alert('Giriş Başarılı', 'Hesabınıza başarıyla giriş yapıldı.');
+        navigation.navigate('Home'); // Burada 'Home' ekranını ana ekran olarak varsaydım, istediğiniz ekranı belirleyin
+      }
+    } catch (error) {
+      console.error('Giriş hatası:', error.message);
+      Alert.alert('Giriş Hatası', 'Kullanıcı adı veya şifre yanlış.');
+    }
   };
 
   return (

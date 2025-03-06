@@ -1,14 +1,32 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import authService from '../services/authService';  // authService'i dahil et
 
 const Step4_BirthdayGender = ({ route, navigation }) => {
-  const { username, email, password } = route.params;
+  const { username, email, password, firstName, lastName } = route.params;  // Parametrelerden alınan veriler
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
+  const [error, setError] = useState(''); // Hata mesajları için durum ekleyelim
 
-  const handleNext = () => {
-    navigation.navigate('Step5_PhotoBio', { username, email, password, birthday, gender });
+  const handleNext = async () => {
+    if (birthday.trim() === '' || gender.trim() === '') {
+      setError('Doğum tarihi ve cinsiyet boş olamaz!');
+      return;
+    }
+
+    try {
+      // Kullanıcı verilerini oluştur
+      const userData = { username, firstName, lastName, email, password, birthday, gender };
+
+      // authService ile backend'e kaydet
+      await authService.register(userData);  // Kayıt işlemi
+
+      // Kayıt başarılıysa, sonraki adıma yönlendir
+      navigation.navigate('Step5_PhotoBio', { username, email, password, firstName, lastName, birthday, gender });
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');  // Hata mesajı
+    }
   };
 
   return (
@@ -25,6 +43,7 @@ const Step4_BirthdayGender = ({ route, navigation }) => {
         value={birthday}
         onChangeText={setBirthday}
         autoCapitalize="none"
+        keyboardType="numeric"
       />
       <TextInput
         style={styles.input}
@@ -34,6 +53,10 @@ const Step4_BirthdayGender = ({ route, navigation }) => {
         onChangeText={setGender}
         autoCapitalize="none"
       />
+      
+      {/* Hata mesajı */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Devam Et</Text>
       </TouchableOpacity>
@@ -86,6 +109,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

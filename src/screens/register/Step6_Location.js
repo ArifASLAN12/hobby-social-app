@@ -8,12 +8,14 @@ const Step6_Location = ({ route, navigation }) => {
   const [location, setLocation] = useState(null);
   const [address, setAddress] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Konum izni verilmedi.');
+        setIsLoading(false);
         return;
       }
 
@@ -23,8 +25,9 @@ const Step6_Location = ({ route, navigation }) => {
       let reverseGeocode = await Location.reverseGeocodeAsync(location.coords);
       if (reverseGeocode.length > 0) {
         const { subregion, region, country } = reverseGeocode[0];
-        setAddress(`${subregion}, ${city}, ${region}, ${country}`);
+        setAddress(`${subregion}, ${region}, ${country}`);
       }
+      setIsLoading(false);
     })();
   }, []);
 
@@ -54,12 +57,12 @@ const Step6_Location = ({ route, navigation }) => {
       <View style={styles.contentContainer}>
         {errorMsg ? (
           <Text style={styles.errorMsg}>{errorMsg}</Text>
-        ) : address ? (
-          <Text style={styles.locationText}>
-            Konumunuz: {address}
-          </Text>
-        ) : (
+        ) : isLoading ? (
           <ActivityIndicator size="large" color="#0095F6" />
+        ) : address ? (
+          <Text style={styles.locationText}>Konumunuz: {address}</Text>
+        ) : (
+          <Text style={styles.errorMsg}>Konum alınırken bir hata oluştu.</Text>
         )}
       </View>
       <TouchableOpacity style={styles.button} onPress={handleNext}>

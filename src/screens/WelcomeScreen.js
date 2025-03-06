@@ -1,14 +1,61 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
+import userService from '../../services/UserService'; // Servisi import et
 
 const WelcomeScreen = ({ navigation }) => {
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
   useEffect(() => {
+    // Kullanıcı profilini servisten al
+    const fetchUserProfile = async () => {
+      try {
+        const profileData = await userService.getUserProfile(); // Kullanıcı profili alınır
+        setUserProfile(profileData); // Profil verilerini state'e kaydet
+      } catch (error) {
+        setError('Kullanıcı verisi alınırken bir hata oluştu.');
+      } finally {
+        setLoading(false); // Yükleme tamamlandı
+      }
+    };
+
+    fetchUserProfile();
+
     const timer = setTimeout(() => {
-      navigation.navigate('CategorySelection'); // Ana ekran
+      navigation.navigate('CategorySelection'); // Ana ekrana yönlendir
     }, 3000);
 
     return () => clearTimeout(timer);
   }, [navigation]);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <Text style={styles.welcomeText}>Yükleniyor...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <Text style={styles.welcomeText}>{error}</Text>
+      </View>
+    );
+  }
+
+  // Profil verisi yoksa bu durumda fallback mesajı göster
+  if (!userProfile) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <Text style={styles.welcomeText}>Profil bilgileri mevcut değil.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -19,10 +66,11 @@ const WelcomeScreen = ({ navigation }) => {
       />
       <View style={styles.content}>
         <Image 
-          source={require('../../assets/profile.png')} // Yerel bir görsel
+          source={{ uri: userProfile.profilePicture || require('../../assets/profile.png') }} // Profil fotoğrafı
           style={styles.profileImage} 
         />
-        <Text style={styles.welcomeText}>Hobiiye hoş geldin, Nazlı</Text>
+        <Text style={styles.welcomeText}>Hobiiye hoş geldin, {userProfile.name || 'Nazlı'}</Text>
+        <Text style={styles.subText}>{userProfile.email}</Text> {/* E-posta adresini göster */}
         <Text style={styles.subText}>Deneyiminizi özelleştirmeye başlayalım</Text>
       </View>
     </View>

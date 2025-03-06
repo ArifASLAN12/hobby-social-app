@@ -1,112 +1,18 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
-
-const categories = [
-    { id: "1", name: "Müzik" },
-    { id: "2", name: "Sinema" },
-    { id: "3", name: "Spor" },
-    { id: "4", name: "Teknoloji" },
-    { id: "5", name: "Sanat" },
-    { id: "6", name: "Bilim" },
-    { id: "7", name: "Edebiyat" },
-    { id: "8", name: "Tarih" },
-    { id: "9", name: "Felsefe" },
-    { id: "10", name: "Psikoloji" },
-    { id: "11", name: "Fotoğrafçılık" },
-    { id: "12", name: "Moda" },
-    { id: "13", name: "Yemek" },
-    { id: "14", name: "Gezi" },
-    { id: "15", name: "Hayvanlar" },
-    { id: "16", name: "Aile" },
-    { id: "17", name: "Çevre" },
-    { id: "18", name: "Astronomi" },
-    { id: "19", name: "Matematik" },
-    { id: "20", name: "Sosyoloji" },
-    { id: "21", name: "Hikaye" },
-    { id: "22", name: "Tasarım" },
-    { id: "23", name: "Yazılım" },
-    { id: "24", name: "Oyun" },
-    { id: "25", name: "Fizik" },
-    { id: "26", name: "Kimya" },
-    { id: "27", name: "Biyoloji" },
-    { id: "28", name: "Ekonomi" },
-    { id: "29", name: "Girişimcilik" },
-    { id: "30", name: "Politika" },
-    { id: "31", name: "Edebiyat" },
-    { id: "32", name: "Şiir" },
-    { id: "33", name: "Mimari" },
-    { id: "34", name: "Arkeoloji" },
-    { id: "35", name: "Sağlık" },
-    { id: "36", name: "Seyahat" },
-    { id: "37", name: "Yatırım" },
-    { id: "38", name: "Eğitim" },
-    { id: "39", name: "Sosyal Medya" },
-    { id: "40", name: "Kariyer" },
-    { id: "41", name: "Doğa" },
-    { id: "42", name: "Yaşam" },
-    { id: "43", name: "Kültür" },
-    { id: "44", name: "Teknolojik İnovasyon" },
-    { id: "45", name: "Kişisel Gelişim" },
-    { id: "46", name: "İş Dünyası" },
-    { id: "47", name: "Web Tasarımı" },
-    { id: "48", name: "Gastronomi" },
-    { id: "49", name: "Futbol" },
-    { id: "50", name: "Basketbol" },
-    { id: "51", name: "Yüzme" },
-    { id: "52", name: "Kamp" },
-    { id: "53", name: "Yoga" },
-    { id: "54", name: "Meditasyon" },
-    { id: "55", name: "Dijital Pazarlama" },
-    { id: "56", name: "Hikayeler" },
-    { id: "57", name: "Sahne Sanatları" },
-    { id: "58", name: "Tiyatro" },
-    { id: "59", name: "Ballet" },
-    { id: "60", name: "Meyve" },
-    { id: "61", name: "Sebze" },
-    { id: "62", name: "Şarap" },
-    { id: "63", name: "Kahve" },
-    { id: "64", name: "Çay" },
-    { id: "65", name: "Vücut Geliştirme" },
-    { id: "66", name: "Aromaterapi" },
-    { id: "67", name: "Sosyal Hizmetler" },
-    { id: "68", name: "Eğlence" },
-    { id: "69", name: "Astronomi" },
-    { id: "70", name: "Felsefi Konular" },
-    { id: "71", name: "Antropoloji" },
-    { id: "72", name: "Çalışma Psikolojisi" },
-    { id: "73", name: "İnsan Kaynakları" },
-    { id: "74", name: "Finans" },
-    { id: "75", name: "Borsa" },
-    { id: "76", name: "Hukuk" },
-    { id: "77", name: "Güvenlik" },
-    { id: "78", name: "Tarım" },
-    { id: "79", name: "Ziraat" },
-    { id: "81", name: "Zeka Oyunları" },
-    { id: "82", name: "Felsefe Tarihi" },
-    { id: "83", name: "Kişisel İletişim" },
-    { id: "84", name: "Yapay Zeka" },
-    { id: "85", name: "Makine Öğrenimi" },
-    { id: "86", name: "Veri Bilimi" },
-    { id: "87", name: "Siber Güvenlik" },
-    { id: "88", name: "Kriptografi" },
-    { id: "89", name: "E-Ticaret" },
-    { id: "90", name: "Blockchain" },
-    { id: "91", name: "Robotik" },
-    { id: "92", name: "Fiziksel Eğitim" },
-    { id: "94", name: "Gıda Teknolojisi" },
-    { id: "95", name: "Yapay Zeka Geliştirme" },
-  ];
-  
+// CategorySelectionScreen.js
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import { getCategories, saveSelectedCategories } from '../services/categoryService'; // Servis dosyasını içeri aktar
 
 const CategorySelectionScreen = ({ navigation }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const numColumns = 3; // Sütun sayısını burada tanımlayın
+  const [categories, setCategories] = useState([]);
+  const numColumns = 3;
+
+  useEffect(() => {
+    // Kategorileri servis üzerinden alıyoruz
+    const categoriesData = getCategories();
+    setCategories(categoriesData);
+  }, []);
 
   const toggleCategory = (categoryId) => {
     setSelectedCategories((prevSelected) => {
@@ -119,7 +25,7 @@ const CategorySelectionScreen = ({ navigation }) => {
   };
 
   const handleNext = () => {
-    console.log("Seçilen Kategoriler:", selectedCategories);
+    saveSelectedCategories(selectedCategories); // Kategorileri kaydediyoruz
     navigation.navigate("Home");
   };
 
@@ -149,13 +55,13 @@ const CategorySelectionScreen = ({ navigation }) => {
         data={categories}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        numColumns={numColumns} // 3 sütun
+        numColumns={numColumns}
         key={numColumns}
         contentContainerStyle={styles.list}
       />
       <TouchableOpacity
         style={styles.nextButton}
-        onPress={() => navigation.navigate("Home")} // Burada Home ekranına gidiyoruz
+        onPress={handleNext}
         disabled={selectedCategories.length === 0}
       >
         <Text style={styles.nextText}>Tamamlandı</Text>
@@ -181,15 +87,15 @@ const styles = StyleSheet.create({
   list: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 5, // Sağ ve sol için daha az boşluk
+    paddingHorizontal: 5,
   },
   categoryButton: {
     backgroundColor: "#1F1F1F",
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 12,
-    margin: 5, // Kutular arasındaki boşluk
-    width: "30%", // Her bir butonun genişliği ayarlandı
+    margin: 5,
+    width: "30%",
     alignItems: "center",
     elevation: 4,
     shadowColor: "#ffffff",

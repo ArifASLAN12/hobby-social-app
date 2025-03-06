@@ -1,14 +1,32 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import authService from '../services/authService';  // authService'i dahil et
 
 const Step3_EmailPassword = ({ route, navigation }) => {
-  const { username } = route.params;
+  const { username, firstName, lastName } = route.params;  // Parametrelerden alınan veriler
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // Hata mesajları için durum ekleyelim
 
-  const handleNext = () => {
-    navigation.navigate('Step4_BirthdayGender', { username, email, password });
+  const handleNext = async () => {
+    if (email.trim() === '' || password.trim() === '') {
+      setError('E-posta ve Şifre boş olamaz!');
+      return;
+    }
+
+    try {
+      // Kullanıcı verilerini oluştur
+      const userData = { username, firstName, lastName, email, password };
+
+      // authService ile backend'e kaydet
+      await authService.register(userData);  // Kayıt işlemi
+
+      // Kayıt başarılıysa, sonraki adıma yönlendir
+      navigation.navigate('Step4_BirthdayGender', { username, firstName, lastName, email, password });
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');  // Hata mesajı
+    }
   };
 
   return (
@@ -36,6 +54,10 @@ const Step3_EmailPassword = ({ route, navigation }) => {
         onChangeText={setPassword}
         autoCapitalize="none"
       />
+      
+      {/* Hata mesajı */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Devam Et</Text>
       </TouchableOpacity>
@@ -88,6 +110,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

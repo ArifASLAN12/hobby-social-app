@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, StatusBar } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import userService from '../services/userService';  // Kullanıcı hizmetlerini ekle
 
 const Step5_PhotoBio = ({ route, navigation }) => {
   const { username, firstName, lastName, email, password, birthday, gender } = route.params;
   const [bio, setBio] = useState('');
   const [profileImage, setProfileImage] = useState(null);
+  const [error, setError] = useState(''); // Hata mesajları için durum
 
   const handleChoosePhoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -21,18 +23,29 @@ const Step5_PhotoBio = ({ route, navigation }) => {
     }
   };
 
-  const handleNext = () => {
-    navigation.navigate('Step6_Location', {
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-      birthday,
-      gender,
-      bio,
-      profileImage,
-    });
+  const handleNext = async () => {
+    if (!profileImage) {
+      setError('Lütfen bir profil fotoğrafı seçin.');
+      return;
+    }
+    
+    if (bio.trim() === '') {
+      setError('Biyografi boş olamaz!');
+      return;
+    }
+
+    try {
+      // Kullanıcı verilerini oluştur
+      const userData = { username, firstName, lastName, email, password, birthday, gender, bio, profileImage };
+
+      // userService ile backend'e kaydet
+      await userService.register(userData);  // Kayıt işlemi
+
+      // Kayıt başarılıysa, sonraki adıma yönlendir
+      navigation.navigate('Step6_Location', { ...userData });
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');
+    }
   };
 
   return (
@@ -42,6 +55,8 @@ const Step5_PhotoBio = ({ route, navigation }) => {
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
       <Text style={styles.title}>Profil Fotoğrafı Ekle</Text>
+      
+      {/* Profil fotoğrafı seçme */}
       <TouchableOpacity style={styles.photoContainer} onPress={handleChoosePhoto}>
         {profileImage ? (
           <Image source={{ uri: profileImage }} style={styles.photo} />
@@ -49,6 +64,8 @@ const Step5_PhotoBio = ({ route, navigation }) => {
           <Ionicons name="camera" size={50} color="#aaa" />
         )}
       </TouchableOpacity>
+
+      {/* Biyografi giriş */}
       <TextInput
         style={styles.input}
         placeholder="Kendiniz hakkında bir şeyler yazın..."
@@ -58,6 +75,11 @@ const Step5_PhotoBio = ({ route, navigation }) => {
         multiline
         numberOfLines={4}
       />
+
+      {/* Hata mesajı */}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      {/* Devam et butonu */}
       <TouchableOpacity style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Devam Et</Text>
       </TouchableOpacity>
@@ -125,6 +147,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
