@@ -9,7 +9,7 @@ const Step1_Username = ({ navigation }) => {
 
   const handleNext = async () => {
     if (username.trim() === '') {
-      setError('Kullanıcı adı boş olamaz!');  // Hata kontrolü ekledik
+      setError('Kullanıcı adı boş olamaz1!');  // Hata kontrolü ekledik
       return;
     }
 
