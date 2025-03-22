@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
-import userService from '../../services/UserService'; // Servisi import et
+import userService from '../services/userService'; // Servisi import et
 
 const WelcomeScreen = ({ navigation }) => {
   const [userProfile, setUserProfile] = useState(null);

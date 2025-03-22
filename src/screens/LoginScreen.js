@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image, Alert } from 'react-native';
-import authService from '../../services/authService'; // authService'yi import et
+import authService from '../services/authService'; // authService'yi import et
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');

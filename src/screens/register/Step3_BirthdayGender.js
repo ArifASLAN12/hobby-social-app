@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Linking } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Modal, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import authService from '../../services/authService';
 
-const Step1_Username = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+const Step3_BirthdayGender = ({ route, navigation }) => {
+  const { username, email, password } = route.params;
+
+  // Bugünün tarihini al
+  const today = new Date();
+  
+  // Bugün ay ve gün ile birlikte varsayılan tarih olarak ayarlandı
+  const defaultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()); // 18 yaşında olmak için
+
+  const [birthday, setBirthday] = useState(defaultDate.toLocaleDateString('tr-TR'));
+  const [gender, setGender] = useState('');
   const [error, setError] = useState('');
 
   const handleNext = async () => {
-    if (username.trim() === '') {
-      setError('Kullanıcı adı boş olamaz!');
+    if (!birthday || !gender) {
+      setError('Doğum tarihi ve cinsiyet boş olamaz!');
       return;
     }
-
-    try {
-      const userData = { username };
-      await authService.register(userData);
-      navigation.navigate('Step2_EmailPassword', { username });
-    } catch (err) {
-      setError('Kayıt sırasında bir hata oluştu!');
-    }
+    navigation.navigate('Step5_PhotoBio', { username, email, password, birthday, gender });
   };
 
   return (
@@ -28,33 +29,34 @@ const Step1_Username = ({ navigation }) => {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      
-      <View style={styles.content}>
-        <Text style={styles.title}>Kullanıcı Adınızı Girin</Text>
 
+      <View style={styles.content}>
+        <Text style={styles.title}>Doğum Tarihiniz ve Cinsiyet</Text>
+
+        {/* Doğum Tarihi Seçimi */}
         <TextInput
           style={styles.input}
-          placeholder="Kullanıcı adı"
+          value={birthday}
+          onChangeText={setBirthday}
+          placeholder="Doğum tarihi (GG/AA/YYYY)"
           placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
         />
 
+        {/* Cinsiyet Seçimi */}
+        <TouchableOpacity style={styles.input} onPress={() => setGender(gender === 'Kadın' ? 'Erkek' : 'Kadın')}>
+          <Text style={gender ? styles.inputText : styles.placeholderText}>
+            {gender || 'Cinsiyet seçin'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Hata Mesajı */}
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
+        {/* Devam Et Butonu */}
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>Devam Et</Text>
         </TouchableOpacity>
       </View>
-
-      <Text style={styles.termsText}>
-        Bir hesap oluşturarak,{' '}
-        <Text style={styles.link} onPress={() => Linking.openURL('https://example.com/terms')}>
-          Şartlar ve Gizlilik Politikası
-        </Text>{' '}
-        ile aynı fikirde olduğunuzu kabul etmiş olursunuz.
-      </Text>
     </View>
   );
 };
@@ -92,9 +94,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 15,
+    justifyContent: 'center',
     marginBottom: 15,
-    color: 'white',
     backgroundColor: '#1e1e1e',
+  },
+  inputText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  placeholderText: {
+    color: '#aaa',
+    fontSize: 16,
   },
   button: {
     backgroundColor: '#0095F6',
@@ -121,16 +131,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  termsText: {
-    color: '#bbb',
-    fontSize: 12,
-    textAlign: 'center',
-    marginBottom: 20, // Yazıyı en aşağı almak için
-  },
-  link: {
-    color: '#0095F6',
-    fontWeight: 'bold',
-  },
 });
 
-export default Step1_Username;
+export default Step3_BirthdayGender;

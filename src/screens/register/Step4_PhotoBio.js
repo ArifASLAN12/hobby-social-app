@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, StatusBar, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import userService from '../services/userService';  // Kullanıcı hizmetlerini ekle
+import * as Location from 'expo-location';  // Konum izni için import
+import userService from '../../services/userService';  // Kullanıcı hizmetlerini ekle
 
-const Step5_PhotoBio = ({ route, navigation }) => {
-  const { username, firstName, lastName, email, password, birthday, gender } = route.params;
+const Step4_PhotoBio = ({ route, navigation }) => {
+  const { username, email, password, birthday, gender } = route.params;
   const [bio, setBio] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState(''); // Hata mesajları için durum
 
+  // Fotoğraf seçme işlevi
   const handleChoosePhoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
@@ -23,26 +25,42 @@ const Step5_PhotoBio = ({ route, navigation }) => {
     }
   };
 
+  // Konum izni alma işlevi
+  const handleLocationPermission = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Konum izni verilmedi! Uygulama, konum bilgisi gerektiriyor.');
+      return false;
+    }
+    return true;
+  };
+
+  // "Devam Et" butonuna tıklama işlevi
   const handleNext = async () => {
     if (!profileImage) {
       setError('Lütfen bir profil fotoğrafı seçin.');
       return;
     }
-    
+
     if (bio.trim() === '') {
       setError('Biyografi boş olamaz!');
       return;
     }
 
+    const locationPermissionGranted = await handleLocationPermission();
+    if (!locationPermissionGranted) {
+      return;
+    }
+
     try {
       // Kullanıcı verilerini oluştur
-      const userData = { username, firstName, lastName, email, password, birthday, gender, bio, profileImage };
+      const userData = { username, email, password, birthday, gender, bio, profileImage };
 
       // userService ile backend'e kaydet
       await userService.register(userData);  // Kayıt işlemi
 
-      // Kayıt başarılıysa, sonraki adıma yönlendir
-      navigation.navigate('Step6_Location', { ...userData });
+      // Kayıt başarılıysa, Welcome sayfasına yönlendir
+      navigation.replace('Welcome', { ...userData });
     } catch (err) {
       setError('Kayıt sırasında bir hata oluştu!');
     }
@@ -157,4 +175,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Step5_PhotoBio;
+export default Step4_PhotoBio;
