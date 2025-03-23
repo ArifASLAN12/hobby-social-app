@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import { View, Text, TextInput, Button, Alert, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import adminService from "../../services/adminService"; // adminService'yi doğru import ettik
 
@@ -23,28 +23,98 @@ const Register = () => {
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text>Admin Kayıt</Text>
+    <View style={styles.container}>
+      {/* Logo */}
+      <Image source={require("../../../assets/logo.png")} style={styles.logo} />
+      
+      <Text style={styles.title}>Admin Kayıt</Text>
+
+      {/* Kullanıcı Adı */}
       <TextInput
         placeholder="Kullanıcı Adı"
         value={username}
         onChangeText={setUsername}
+        style={styles.input}
       />
+
+      {/* E-posta */}
       <TextInput
         placeholder="E-posta"
         value={email}
         onChangeText={setEmail}
+        style={styles.input}
       />
+
+      {/* Şifre */}
       <TextInput
         placeholder="Şifre"
         value={password}
         secureTextEntry
         onChangeText={setPassword}
+        style={styles.input}
       />
-      <Button title="Kayıt Ol" onPress={handleRegister} />
-      <Button title="Giriş Yap" onPress={() => navigation.navigate("AdminLogin")} />
+
+      {/* Kayıt Ol Butonu */}
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>Kayıt Ol</Text>
+      </TouchableOpacity>
+
+      {/* Giriş Yap Butonu */}
+      <TouchableOpacity onPress={() => navigation.navigate("AdminLogin")}>
+        <Text style={styles.footerText}>Zaten bir hesabınız var mı? Giriş Yap</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+  },
+  button: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#4CAF50",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  footerText: {
+    color: "#4CAF50",
+    fontSize: 16,
+    textDecorationLine: "underline",
+  },
+});
 
 export default Register;
