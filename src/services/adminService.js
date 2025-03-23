@@ -1,20 +1,11 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { 
-  ADMIN_REGISTER_URL,
-  ADMIN_LOGIN_URL,
-  ADMIN_LOGOUT_URL,
-  ADMIN_USER_URL,
-  ADMIN_UPDATE_USER_URL,
-  ADMIN_DELETE_USER_URL,
-  ADMIN_DASHBOARD_URL,
-  ADMIN_USERS_LIST_URL 
-} from "react-native-dotenv"; // .env dosyasındaki admin API URL'lerini alıyoruz
+import Config from "react-native-config";  // react-native-config'i import ettik
 
 // Admin için kayıt işlemi
 const register = async (username, email, password) => {
   try {
-    const response = await axios.post(ADMIN_REGISTER_URL, {
+    const response = await axios.post(Config.ADMIN_REGISTER_URL, {  // Config üzerinden URL'yi alıyoruz
       username,
       email,
       password,
@@ -28,7 +19,7 @@ const register = async (username, email, password) => {
 // Admin için giriş işlemi
 const login = async (identifier, password) => {
   try {
-    const response = await axios.post(ADMIN_LOGIN_URL, {
+    const response = await axios.post(Config.ADMIN_LOGIN_URL, {  // Config üzerinden URL'yi alıyoruz
       identifier,
       password,
     });
@@ -44,14 +35,14 @@ const login = async (identifier, password) => {
 const logout = async () => {
   // Admin token'ını AsyncStorage'dan sil
   await AsyncStorage.removeItem("adminToken");
-  await axios.post(ADMIN_LOGOUT_URL);  // Admin çıkış işlemine istek gönderebiliriz
+  await axios.post(Config.ADMIN_LOGOUT_URL);  // Admin çıkış işlemine istek gönderebiliriz
 };
 
 // Admin kullanıcı bilgilerini alma
 const getUserDetails = async () => {
   try {
     const token = await AsyncStorage.getItem("adminToken");
-    const response = await axios.get(ADMIN_USER_URL, {
+    const response = await axios.get(Config.ADMIN_USER_URL, {  // Config üzerinden URL'yi alıyoruz
       headers: {
         Authorization: `Bearer ${token}`, // Bearer token ile auth
       },
@@ -66,7 +57,7 @@ const getUserDetails = async () => {
 const updateUser = async (userId, updatedData) => {
   try {
     const token = await AsyncStorage.getItem("adminToken");
-    const response = await axios.put(`${ADMIN_UPDATE_USER_URL}/${userId}`, updatedData, {
+    const response = await axios.put(`${Config.ADMIN_UPDATE_USER_URL}/${userId}`, updatedData, {  // Config üzerinden URL'yi alıyoruz
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -81,7 +72,7 @@ const updateUser = async (userId, updatedData) => {
 const deleteUser = async (userId) => {
   try {
     const token = await AsyncStorage.getItem("adminToken");
-    const response = await axios.delete(`${ADMIN_DELETE_USER_URL}/${userId}`, {
+    const response = await axios.delete(`${Config.ADMIN_DELETE_USER_URL}/${userId}`, {  // Config üzerinden URL'yi alıyoruz
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -96,7 +87,7 @@ const deleteUser = async (userId) => {
 const getDashboardData = async () => {
   try {
     const token = await AsyncStorage.getItem("adminToken");
-    const response = await axios.get(ADMIN_DASHBOARD_URL, {
+    const response = await axios.get(Config.ADMIN_DASHBOARD_URL, {  // Config üzerinden URL'yi alıyoruz
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -111,7 +102,7 @@ const getDashboardData = async () => {
 const getUsersList = async () => {
   try {
     const token = await AsyncStorage.getItem("adminToken");
-    const response = await axios.get(ADMIN_USERS_LIST_URL, {
+    const response = await axios.get(Config.ADMIN_USERS_LIST_URL, {  // Config üzerinden URL'yi alıyoruz
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -1,16 +1,16 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  USER_REGISTER_URL,
-  USER_LOGIN_URL,
-  USER_PROFILE_URL,
-  USER_UPDATE_PROFILE_URL,
-  USER_CHANGE_PASSWORD_URL,
-  USER_CATEGORIES_URL,
-  USER_LOGOUT_URL,
-  USER_EMAIL_VERIFICATION_URL,
-  USER_PASSWORD_RESET_URL,
-} from "react-native-dotenv"; // .env dosyasındaki kullanıcı API URL'lerini alıyoruz
+import Config from "react-native-config";  // react-native-config import edildi
+
+const USER_REGISTER_URL = Config.USER_REGISTER_URL;
+const USER_LOGIN_URL = Config.USER_LOGIN_URL;
+const USER_PROFILE_URL = Config.USER_PROFILE_URL;
+const USER_UPDATE_PROFILE_URL = Config.USER_UPDATE_PROFILE_URL;
+const USER_CHANGE_PASSWORD_URL = Config.USER_CHANGE_PASSWORD_URL;
+const USER_CATEGORIES_URL = Config.USER_CATEGORIES_URL;
+const USER_LOGOUT_URL = Config.USER_LOGOUT_URL;
+const USER_EMAIL_VERIFICATION_URL = Config.USER_EMAIL_VERIFICATION_URL;
+const USER_PASSWORD_RESET_URL = Config.USER_PASSWORD_RESET_URL;
 
 // Kullanıcı kaydını yapma
 const register = async (username, firstName, lastName, email, password, gender, birthday, location, bio, photo) => {

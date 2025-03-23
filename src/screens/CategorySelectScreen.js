@@ -1,4 +1,3 @@
-// CategorySelectScreen.js
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { getCategories } from '../services/categoryService'; // Servis dosyasını içeri aktar
@@ -15,7 +14,7 @@ const CategorySelectScreen = ({ navigation }) => {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const fetchedCategories = await getCategories(); // Redis'ten veya API'den kategorileri al
+        const fetchedCategories = await getCategories(); // API'den kategorileri al
         setCategories(fetchedCategories);
       } catch (error) {
         setError("Kategoriler yüklenemedi!");
@@ -46,18 +45,10 @@ const CategorySelectScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      style={[
-        styles.categoryButton,
-        selectedCategories.includes(item.id) && styles.selectedButton,
-      ]}
+      style={[styles.categoryButton, selectedCategories.includes(item.id) && styles.selectedButton]}
       onPress={() => toggleCategory(item.id)}
     >
-      <Text
-        style={[
-          styles.categoryText,
-          selectedCategories.includes(item.id) && styles.selectedText,
-        ]}
-      >
+      <Text style={[styles.categoryText, selectedCategories.includes(item.id) && styles.selectedText]}>
         {item.name}
       </Text>
     </TouchableOpacity>

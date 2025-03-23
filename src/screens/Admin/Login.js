@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import adminService from "./adminService"; // adminService'i doğru import ettik
+import adminService from "../../services/adminService"; // adminService'i doğru import ettik
 
 const Login = () => {
   const navigation = useNavigation();
