@@ -1,53 +1,49 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import authService from "../../services/authService";
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Linking } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import userService from '../../services/userService';
 
 const Step2_EmailPassword = ({ route, navigation }) => {
-  const { username } = route.params; // Sadece username alınıyor
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const { username, firstName, lastName } = route.params; // Previous stepten gelen veriler
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleNext = async () => {
-    if (email.trim() === "" || password.trim() === "") {
-      setError("E-posta ve şifre boş olamaz!");
+    // Boş alan kontrolü
+    if (email.trim() === '' || password.trim() === '' || confirmPassword.trim() === '') {
+      setError('E-posta, şifre ve şifre tekrarını doldurun!');
+      return;
+    }
+
+    // Şifre doğrulama
+    if (password !== confirmPassword) {
+      setError('Şifreler uyuşmuyor!');
       return;
     }
 
     try {
-      const userData = { username, email, password };
-      await authService.register(userData);
-      navigation.navigate("Step4_BirthdayGender", {
-        username,
-        email,
-        password,
-      });
+      // Kullanıcı verilerini gönderiyoruz
+      const userData = { username, firstName, lastName, email, password };
+      await userService.register(userData);
+      navigation.navigate('Step3_BirthdayGender', { ...userData });
     } catch (err) {
-      setError("Kayıt sırasında bir hata oluştu!");
+      setError('Kayıt sırasında bir hata oluştu!');
     }
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
       <View style={styles.content}>
         <Text style={styles.title}>E-posta ve Şifre Girin</Text>
 
+        {/* E-posta */}
         <TextInput
           style={styles.input}
           placeholder="E-posta"
@@ -58,6 +54,7 @@ const Step2_EmailPassword = ({ route, navigation }) => {
           autoCapitalize="none"
         />
 
+        {/* Şifre */}
         <TextInput
           style={styles.input}
           placeholder="Şifre"
@@ -68,8 +65,21 @@ const Step2_EmailPassword = ({ route, navigation }) => {
           autoCapitalize="none"
         />
 
+        {/* Şifre Tekrarı */}
+        <TextInput
+          style={styles.input}
+          placeholder="Şifreyi Tekrar Girin"
+          placeholderTextColor="#aaa"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          autoCapitalize="none"
+        />
+
+        {/* Hata Mesajı */}
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
+        {/* Devam Et Butonu */}
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>Devam Et</Text>
         </TouchableOpacity>
@@ -89,47 +99,47 @@ const Step2_EmailPassword = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
-    alignItems: "center",
-    justifyContent: "space-between",
+    backgroundColor: '#121212',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 20,
   },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 40,
     left: 20,
   },
   content: {
-    width: "100%",
-    alignItems: "center",
+    width: '100%',
+    alignItems: 'center',
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   title: {
-    color: "white",
+    color: 'white',
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   input: {
     height: 50,
-    width: "100%",
-    borderColor: "#333",
+    width: '100%',
+    borderColor: '#333',
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
-    color: "white",
-    backgroundColor: "#1e1e1e",
+    color: 'white',
+    backgroundColor: '#1e1e1e',
   },
   button: {
-    backgroundColor: "#0095F6",
+    backgroundColor: '#0095F6',
     borderRadius: 12,
     paddingVertical: 15,
-    width: "100%",
-    alignItems: "center",
-    shadowColor: "#000",
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -137,26 +147,26 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   error: {
-    color: "red",
+    color: 'red',
     marginBottom: 10,
     fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   termsText: {
-    color: "#bbb",
+    color: '#bbb',
     fontSize: 12,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 20,
   },
   link: {
-    color: "#0095F6",
-    fontWeight: "bold",
+    color: '#0095F6',
+    fontWeight: 'bold',
   },
 });
 

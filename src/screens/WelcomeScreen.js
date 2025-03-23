@@ -1,77 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
-import userService from '../services/userService'; // Servisi import et
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const WelcomeScreen = ({ navigation }) => {
-  const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    // Kullanıcı profilini servisten al
-    const fetchUserProfile = async () => {
-      try {
-        const profileData = await userService.getUserProfile(); // Kullanıcı profili alınır
-        setUserProfile(profileData); // Profil verilerini state'e kaydet
-      } catch (error) {
-        setError('Kullanıcı verisi alınırken bir hata oluştu.');
-      } finally {
-        setLoading(false); // Yükleme tamamlandı
-      }
-    };
-
-    fetchUserProfile();
-
-    const timer = setTimeout(() => {
-      navigation.navigate('CategorySelection'); // Ana ekrana yönlendir
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [navigation]);
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <Text style={styles.welcomeText}>Yükleniyor...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <Text style={styles.welcomeText}>{error}</Text>
-      </View>
-    );
-  }
-
-  // Profil verisi yoksa bu durumda fallback mesajı göster
-  if (!userProfile) {
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <Text style={styles.welcomeText}>Profil bilgileri mevcut değil.</Text>
-      </View>
-    );
-  }
+const WelcomeScreen = ({ route, navigation }) => {
+  const { firstName, profilePicture } = route.params;  // Kullanıcının adı ve profil fotoğrafı, route ile gelir.
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <Image 
-        source={require('../../assets/logo.png')} // Hobi logosu
-        style={styles.logo} 
-      />
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="white" />
+      </TouchableOpacity>
+
       <View style={styles.content}>
-        <Image 
-          source={{ uri: userProfile.profilePicture || require('../../assets/profile.png') }} // Profil fotoğrafı
-          style={styles.profileImage} 
-        />
-        <Text style={styles.welcomeText}>Hobiiye hoş geldin, {userProfile.name || 'Nazlı'}</Text>
-        <Text style={styles.subText}>{userProfile.email}</Text> {/* E-posta adresini göster */}
-        <Text style={styles.subText}>Deneyiminizi özelleştirmeye başlayalım</Text>
+        {/* Profil fotoğrafı eğer varsa gösterilecek */}
+        {profilePicture ? (
+          <Image source={{ uri: profilePicture }} style={styles.profileImage} />
+        ) : (
+          <View style={styles.profileImagePlaceholder}>
+            <Ionicons name="person" size={50} color="white" />
+          </View>
+        )}
+
+        <Text style={styles.title}>Hoş Geldiniz, {firstName}!</Text>
+        <Text style={styles.subtitle}>Kayıt işleminiz başarılı bir şekilde tamamlandı.</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('CategorySelection')}  // Kategori Seçim Sayfasına Yönlendir
+        >
+          <Text style={styles.buttonText}>Kategori Seçmeye Başla</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -80,38 +39,67 @@ const WelcomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1C1C1C',
+    backgroundColor: '#121212',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: 20,
   },
-  logo: {
-    width: 80,
-    height: 80,
+  backButton: {
     position: 'absolute',
-    top: 20,
+    top: 40,
+    left: 20,
   },
   content: {
+    width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
     flex: 1,
+    justifyContent: 'center',
   },
   profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 20,
   },
-  welcomeText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  profileImagePlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#777',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  subText: {
-    color: '#aaaaaa',
+  title: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: 'white',
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: '#0095F6',
+    borderRadius: 12,
+    paddingVertical: 15,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
     fontSize: 16,
-    marginBottom: 30,
+    fontWeight: 'bold',
   },
 });
 

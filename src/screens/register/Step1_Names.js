@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import authService from '../../services/authService';
+import userService from '../../services/userService';
 
-const Step1_Username = ({ navigation }) => {
+const Step1_Names = ({ navigation }) => {
   const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
 
   const handleNext = async () => {
-    if (username.trim() === '') {
-<<<<<<< HEAD
-      setError('Kullanıcı adı boş olamaz!');
-=======
-      setError('Kullanıcı adı boş olamaz1!');  // Hata kontrolü ekledik
->>>>>>> a2bdb2f63f961c9a1c703738c3fb6d8f4772e80f
+    // Boş alan kontrolü
+    if (username.trim() === '' || firstName.trim() === '' || lastName.trim() === '') {
+      setError('Tüm alanlar zorunludur!');
       return;
     }
 
     try {
-      const userData = { username };
-      await authService.register(userData);
+      // Kullanıcı verilerini gönderiyoruz
+      const userData = { username, firstName, lastName };
+      await userService.register(username, firstName, lastName, userData.email, userData.password); // E-posta ve şifreyi almanız gerekebilir
       navigation.navigate('Step2_EmailPassword', { username });
     } catch (err) {
       setError('Kayıt sırasında bir hata oluştu!');
@@ -32,10 +32,11 @@ const Step1_Username = ({ navigation }) => {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      
-      <View style={styles.content}>
-        <Text style={styles.title}>Kullanıcı Adınızı Girin</Text>
 
+      <View style={styles.content}>
+        <Text style={styles.title}>Kullanıcı Adı, Ad ve Soyadınızı Girin</Text>
+
+        {/* Kullanıcı Adı */}
         <TextInput
           style={styles.input}
           placeholder="Kullanıcı adı"
@@ -45,8 +46,28 @@ const Step1_Username = ({ navigation }) => {
           autoCapitalize="none"
         />
 
+        {/* Ad */}
+        <TextInput
+          style={styles.input}
+          placeholder="Ad"
+          placeholderTextColor="#aaa"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+
+        {/* Soyad */}
+        <TextInput
+          style={styles.input}
+          placeholder="Soyad"
+          placeholderTextColor="#aaa"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+
+        {/* Hata Mesajı */}
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
+        {/* Devam Et Butonu */}
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>Devam Et</Text>
         </TouchableOpacity>
@@ -129,7 +150,7 @@ const styles = StyleSheet.create({
     color: '#bbb',
     fontSize: 12,
     textAlign: 'center',
-    marginBottom: 20, // Yazıyı en aşağı almak için
+    marginBottom: 20,
   },
   link: {
     color: '#0095F6',
@@ -137,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Step1_Username;
+export default Step1_Names;

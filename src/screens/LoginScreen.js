@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, StatusBar, Image, Alert } from 'react-native';
-import authService from '../services/authService'; // authService'yi import et
+import userService from '../services/userService'; // userService'yi import et
 
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState(''); // Kullanıcı adı veya e-posta
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const response = await authService.login(username, password); // Login fonksiyonunu çağır
+      const response = await userService.login(identifier, password); // userService.login fonksiyonunu çağır
       if (response.token) {
         // Login başarılı ise, ana ekrana yönlendir
         Alert.alert('Giriş Başarılı', 'Hesabınıza başarıyla giriş yapıldı.');
@@ -30,8 +30,8 @@ const LoginScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Kullanıcı adı veya e-posta"
           placeholderTextColor="#aaa"
-          value={username}
-          onChangeText={setUsername}
+          value={identifier}
+          onChangeText={setIdentifier}
           autoCapitalize="none"
         />
         <TextInput

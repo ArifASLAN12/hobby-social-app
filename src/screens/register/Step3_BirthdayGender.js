@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, TextInput, Picker } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import userService from '../../services/userService';  // userService'yi ekliyoruz
 
 const Step3_BirthdayGender = ({ route, navigation }) => {
-  const { username, email, password } = route.params;
-
-  // Bugünün tarihini al
-  const today = new Date();
-  
-  // Bugün ay ve gün ile birlikte varsayılan tarih olarak ayarlandı
-  const defaultDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()); // 18 yaşında olmak için
-
-  const [birthday, setBirthday] = useState(defaultDate.toLocaleDateString('tr-TR'));
+  const { username, firstName, lastName, email, password } = route.params;
+  const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
   const [error, setError] = useState('');
 
   const handleNext = async () => {
-    if (!birthday || !gender) {
-      setError('Doğum tarihi ve cinsiyet boş olamaz!');
+    // Boş alan kontrolü
+    if (!dob || !gender) {
+      setError('Doğum günü ve cinsiyet zorunludur!');
       return;
     }
-    navigation.navigate('Step5_PhotoBio', { username, email, password, birthday, gender });
+
+    try {
+      // Kullanıcı verilerini birleştiriyoruz
+      const userData = { username, firstName, lastName, email, password, dob, gender };
+      
+      // Veriyi backend'e gönderiyoruz
+      await userService.updateUserInfo(userData);  // userService üzerinden backend'e gönderim yapıyoruz
+
+      // Başarıyla geçiş yapıyoruz
+      navigation.navigate('Step4_PhotoBio', { userData });  // Burada Step4_Finish ekranına yönlendiriyoruz
+    } catch (err) {
+      setError('Kayıt sırasında bir hata oluştu!');
+    }
   };
 
   return (
@@ -31,23 +38,29 @@ const Step3_BirthdayGender = ({ route, navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Doğum Tarihiniz ve Cinsiyet</Text>
+        <Text style={styles.title}>Doğum Günü ve Cinsiyet Seçin</Text>
 
-        {/* Doğum Tarihi Seçimi */}
+        {/* Doğum Günü Girişi */}
         <TextInput
           style={styles.input}
-          value={birthday}
-          onChangeText={setBirthday}
-          placeholder="Doğum tarihi (GG/AA/YYYY)"
+          placeholder="Doğum Günü (YYYY-MM-DD)"
           placeholderTextColor="#aaa"
+          value={dob}
+          onChangeText={setDob}
+          keyboardType="default"
         />
 
         {/* Cinsiyet Seçimi */}
-        <TouchableOpacity style={styles.input} onPress={() => setGender(gender === 'Kadın' ? 'Erkek' : 'Kadın')}>
-          <Text style={gender ? styles.inputText : styles.placeholderText}>
-            {gender || 'Cinsiyet seçin'}
-          </Text>
-        </TouchableOpacity>
+        <Picker
+          selectedValue={gender}
+          style={styles.input}
+          onValueChange={(itemValue) => setGender(itemValue)}
+        >
+          <Picker.Item label="Cinsiyet Seçin" value="" />
+          <Picker.Item label="Erkek" value="male" />
+          <Picker.Item label="Kadın" value="female" />
+          <Picker.Item label="Diğer" value="other" />
+        </Picker>
 
         {/* Hata Mesajı */}
         {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -94,17 +107,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 15,
-    justifyContent: 'center',
     marginBottom: 15,
-    backgroundColor: '#1e1e1e',
-  },
-  inputText: {
     color: 'white',
-    fontSize: 16,
-  },
-  placeholderText: {
-    color: '#aaa',
-    fontSize: 16,
+    backgroundColor: '#1e1e1e',
   },
   button: {
     backgroundColor: '#0095F6',

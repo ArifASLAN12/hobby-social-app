@@ -1,66 +1,42 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, StatusBar, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as Location from 'expo-location';  // Konum izni için import
-import userService from '../../services/userService';  // Kullanıcı hizmetlerini ekle
+import * as ImagePicker from 'expo-image-picker';  // Fotoğraf seçici için
+import userService from '../../services/userService';  // userService'yi ekliyoruz
 
 const Step4_PhotoBio = ({ route, navigation }) => {
-  const { username, email, password, birthday, gender } = route.params;
+  const { username, firstName, lastName, email, password, dob, gender } = route.params;
   const [bio, setBio] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [error, setError] = useState(''); // Hata mesajları için durum
+  const [error, setError] = useState('');
 
-  // Fotoğraf seçme işlevi
-  const handleChoosePhoto = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
-      alert("Fotoğraf erişim izni verilmedi.");
-      return;
-    }
+  const handleImagePick = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
 
-    let result = await ImagePicker.launchImageLibraryAsync();
     if (!result.cancelled) {
-      setProfileImage(result.uri);
+      setProfileImage(result.uri);  // Seçilen fotoğrafı state'e ekliyoruz
     }
   };
 
-  // Konum izni alma işlevi
-  const handleLocationPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Konum izni verilmedi! Uygulama, konum bilgisi gerektiriyor.');
-      return false;
-    }
-    return true;
-  };
-
-  // "Devam Et" butonuna tıklama işlevi
   const handleNext = async () => {
-    if (!profileImage) {
-      setError('Lütfen bir profil fotoğrafı seçin.');
-      return;
-    }
-
-    if (bio.trim() === '') {
-      setError('Biyografi boş olamaz!');
-      return;
-    }
-
-    const locationPermissionGranted = await handleLocationPermission();
-    if (!locationPermissionGranted) {
+    if (!bio || !profileImage) {
+      setError('Profil fotoğrafı ve biyografi zorunludur!');
       return;
     }
 
     try {
-      // Kullanıcı verilerini oluştur
-      const userData = { username, email, password, birthday, gender, bio, profileImage };
+      const userData = { username, firstName, lastName, email, password, dob, gender, bio, profileImage };
+      
+      // Kullanıcı verilerini backend'e gönderiyoruz
+      await userService.updateUserInfo(userData);  // userService üzerinden backend'e gönderim yapıyoruz
 
-      // userService ile backend'e kaydet
-      await userService.register(userData);  // Kayıt işlemi
-
-      // Kayıt başarılıysa, Welcome sayfasına yönlendir
-      navigation.replace('Welcome', { ...userData });
+      // Başarıyla geçiş yapıyoruz
+      navigation.navigate('Step5_Location', { userData });  // Tamamlama ekranına yönlendiriyoruz
     } catch (err) {
       setError('Kayıt sırasında bir hata oluştu!');
     }
@@ -72,35 +48,37 @@ const Step4_PhotoBio = ({ route, navigation }) => {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      <Text style={styles.title}>Profil Fotoğrafı Ekle</Text>
-      
-      {/* Profil fotoğrafı seçme */}
-      <TouchableOpacity style={styles.photoContainer} onPress={handleChoosePhoto}>
-        {profileImage ? (
-          <Image source={{ uri: profileImage }} style={styles.photo} />
-        ) : (
-          <Ionicons name="camera" size={50} color="#aaa" />
-        )}
-      </TouchableOpacity>
 
-      {/* Biyografi giriş */}
-      <TextInput
-        style={styles.input}
-        placeholder="Kendiniz hakkında bir şeyler yazın..."
-        placeholderTextColor="#aaa"
-        value={bio}
-        onChangeText={setBio}
-        multiline
-        numberOfLines={4}
-      />
+      <View style={styles.content}>
+        <Text style={styles.title}>Profil Fotoğrafı ve Biyografi</Text>
 
-      {/* Hata mesajı */}
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        {/* Profil Fotoğrafı Seçimi */}
+        <TouchableOpacity style={styles.imagePicker} onPress={handleImagePick}>
+          {profileImage ? (
+            <Image source={{ uri: profileImage }} style={styles.image} />
+          ) : (
+            <Text style={styles.imageText}>Fotoğraf Seçin</Text>
+          )}
+        </TouchableOpacity>
 
-      {/* Devam et butonu */}
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Devam Et</Text>
-      </TouchableOpacity>
+        {/* Biyografi Girişi */}
+        <TextInput
+          style={styles.input}
+          placeholder="Biyografi (Hakkında kısa bir şeyler yazın)"
+          placeholderTextColor="#aaa"
+          value={bio}
+          onChangeText={setBio}
+          multiline
+        />
+
+        {/* Hata Mesajı */}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        {/* Devam Et Butonu */}
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>Kaydet ve Devam Et</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -108,9 +86,9 @@ const Step4_PhotoBio = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#121212',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     padding: 20,
   },
   backButton: {
@@ -118,49 +96,62 @@ const styles = StyleSheet.create({
     top: 40,
     left: 20,
   },
+  content: {
+    width: '100%',
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
   title: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 22,
+    fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
-  photoContainer: {
-    backgroundColor: '#333',
-    borderRadius: 50,
-    width: 100,
-    height: 100,
+  imagePicker: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#1e1e1e',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
   },
-  photo: {
-    borderRadius: 50,
-    width: 100,
-    height: 100,
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+  },
+  imageText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   input: {
     height: 100,
     width: '100%',
-    borderColor: '#555',
+    borderColor: '#333',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
     color: 'white',
-    backgroundColor: '#222',
+    backgroundColor: '#1e1e1e',
     textAlignVertical: 'top',
   },
   button: {
     backgroundColor: '#0095F6',
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 15,
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowRadius: 5,
     elevation: 5,
+    marginTop: 10,
   },
   buttonText: {
     color: 'white',
@@ -172,6 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 14,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
