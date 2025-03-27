@@ -5,7 +5,7 @@ export const menuItems = [
       subMenu: [
         { title: 'Kullanıcı Listeleme', route: 'UserList' },
         { title: 'Kullanıcı Ekleme/Düzenleme', route: 'AddEditUser' },
-        { title: 'Hesap Engelleme/Onaylama', route: 'BlockUnblockUser' },
+        { title: 'Kullanıcı Şikayetleri', route: 'ComplaintManagement' },
         { title: 'Rol ve İzin Yönetimi', route: 'RolePermissions' },
       ],
     },

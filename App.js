@@ -14,6 +14,11 @@ import AdminDashboard from "./src/screens/Admin/AdminDashboard";
 import AdminLogin from "./src/screens/Admin/Login";
 import AdminRegister from "./src/screens/Admin/Register";
 import UserList from "./src/screens/Admin/UserManagement/UserList";
+import AddEditUser from "./src/screens/Admin/UserManagement/AddEditUser";
+import ComplaintManagement from "./src/screens/Admin/UserManagement/ComplaintManagement";
+import RolePermissions from "./src/screens/Admin/UserManagement/ComplaintManagement";
+import UserDetail from "./src/screens/Admin/UserManagement/UserDetail";
+import ComplaintDetail from "./src/screens/Admin/UserManagement/ComplaintDetail";
 
 const Stack = createStackNavigator();
 
@@ -43,6 +48,14 @@ export default function App() {
         <Stack.Screen name="AdminLogin" component={AdminLogin} />
         <Stack.Screen name="AdminRegister" component={AdminRegister} />
         <Stack.Screen name="UserList" component={UserList} />
+        <Stack.Screen name="AddEditUser" component={AddEditUser} />
+        <Stack.Screen name="ComplaintManagement" component={ComplaintManagement} />
+        <Stack.Screen name="RolePermissions" component={RolePermissions} />
+        <Stack.Screen name="UserDetail" component={UserDetail} />
+        <Stack.Screen name="ComplaintDetail" component={ComplaintDetail} />
+
+
+
 
       </Stack.Navigator>
     </NavigationContainer>
