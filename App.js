@@ -13,6 +13,7 @@ import CategorySelection from "./src/screens/CategorySelectScreen";
 import AdminDashboard from "./src/screens/Admin/AdminDashboard";
 import AdminLogin from "./src/screens/Admin/Login";
 import AdminRegister from "./src/screens/Admin/Register";
+import UserList from "./src/screens/Admin/UserManagement/UserList";
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,8 @@ export default function App() {
         <Stack.Screen name="AdminDashboard" component={AdminDashboard} />
         <Stack.Screen name="AdminLogin" component={AdminLogin} />
         <Stack.Screen name="AdminRegister" component={AdminRegister} />
+        <Stack.Screen name="UserList" component={UserList} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
