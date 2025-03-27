@@ -14,7 +14,7 @@ const SplashScreen = ({ navigation }) => {
     });
 
     const timer = setTimeout(() => {
-      fadeOut.start(() => navigation.replace('AdminDashboard'));
+      fadeOut.start(() => navigation.replace('AdminLogin'));
     }, 2000);
 
     return () => clearTimeout(timer);
