@@ -14,7 +14,7 @@ const SplashScreen = ({ navigation }) => {
     });
 
     const timer = setTimeout(() => {
-      fadeOut.start(() => navigation.replace('AdminDashboard'));
+      fadeOut.start(() => navigation.replace('Home'));
     }, 2000);
 
     return () => clearTimeout(timer);
