@@ -1,9 +1,4 @@
 module.exports = {
-    presets: [
-      'module:metro-react-native-babel-preset', // React Native için default preset
-    ],
-    plugins: [
-      // Buraya gerekli Babel plugin'lerini ekleyebilirsiniz
-    ],
-  };
-  
+  presets: ["@babel/preset-env", "@babel/preset-react"],
+  plugins: ["@babel/plugin-transform-private-methods"],
+};
