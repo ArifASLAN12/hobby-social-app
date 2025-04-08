@@ -29,6 +29,7 @@ import EventsScreen from "./src/screens/MainScreen/EventsScreen";
 import ChatScreen from "./src/screens/MainScreen/ChatScreen";
 import GroupScreen from "./src/screens/MainScreen/GroupScreen";
 import CoursesScreen from "./src/screens/MainScreen/CoursesScreen";
+import ProfileScreen from "./src/screens/MainScreen/ProfileScreen";
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,9 @@ export default function App() {
         <Stack.Screen name="ComplaintManagement" component={ComplaintManagement} />
         <Stack.Screen name="UserDetail" component={UserDetail} />
         <Stack.Screen name="ComplaintDetail" component={ComplaintDetail} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

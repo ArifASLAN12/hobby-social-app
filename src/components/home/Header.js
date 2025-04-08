@@ -1,21 +1,28 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Bell } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Header = () => {
-  const avatarUrl = "https://i.pravatar.cc/150?img=12"; // Örnek avatar URL
+  const navigation = useNavigation();
+  const avatarUrl = "https://i.pravatar.cc/150?img=12"; // Örnek avatar
+
+  const goToProfile = () => {
+    navigation.navigate("Profile"); // Stack navigator'da bu isme sahip ekran olmalı
+  };
 
   return (
     <View style={styles.container}>
       {/* Sol - Logo */}
       <Text style={styles.logoText}>hobii</Text>
 
-      {/* Sağ - Bildirim & Profil */}
+      {/* Sağ - Bildirim ve Profil */}
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton}>
           <Bell size={24} color="#111" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.avatarButton}>
+
+        <TouchableOpacity style={styles.avatarButton} onPress={goToProfile}>
           <Image source={{ uri: avatarUrl }} style={styles.avatar} />
         </TouchableOpacity>
       </View>
@@ -48,8 +55,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
-    gap: 16,
     alignItems: "center",
+    gap: 16,
   },
   iconButton: {
     padding: 8,
