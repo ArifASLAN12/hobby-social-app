@@ -1,76 +1,46 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons, MaterialIcons, FontAwesome5 } from 'react-native-vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-const BottomNav = ({ activeTab, onTabPress }) => {
+const BottomNav = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "home" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("home")}
-      >
-        <Icon name="home" size={24} color={activeTab === "home" ? "#2ecc71" : "#777"} />
+      {/* Ana Sayfa */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
+        <Ionicons name="home-outline" size={26} color="#666" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "explore" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("explore")}
-      >
-        <Icon name="search" size={24} color={activeTab === "explore" ? "#2ecc71" : "#777"} />
+      {/* Keşfet */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Explore')}>
+        <Ionicons name="compass-outline" size={26} color="#666" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "events" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("events")}
-      >
-        <Icon name="calendar" size={24} color={activeTab === "events" ? "#2ecc71" : "#777"} />
+      {/* Etkinlikler */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Events')}>
+        <MaterialIcons name="event" size={26} color="#666" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "chat" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("chat")}
-      >
-        <Icon name="comments" size={24} color={activeTab === "chat" ? "#2ecc71" : "#777"} />
+      {/* Ortadaki + Buton */}
+      <TouchableOpacity style={styles.centerButton} onPress={() => console.log("Yeni gönderi oluştur")}>
+        <Ionicons name="add" size={26} color="#fff" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "group" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("group")}
-      >
-        <Icon name="users" size={24} color={activeTab === "group" ? "#2ecc71" : "#777"} />
+      {/* Gruplar */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Group')}>
+        <FontAwesome5 name="users" size={22} color="#666" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.navButton,
-          activeTab === "courses" && styles.activeButton,
-        ]}
-        onPress={() => onTabPress("courses")}
-      >
-        <Icon name="book" size={24} color={activeTab === "courses" ? "#2ecc71" : "#777"} />
+      {/* Chat */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Chat')}>
+        <Ionicons name="chatbubbles-outline" size={26} color="#666" />
       </TouchableOpacity>
 
-      {/* Orta + butonu */}
-      <TouchableOpacity
-        style={styles.plusButton}
-        onPress={() => onTabPress("add")}
-      >
-        <Icon name="plus" size={32} color="#fff" />
+      {/* Kurslar */}
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Courses')}>
+        <Ionicons name="school-outline" size={26} color="#666" />
       </TouchableOpacity>
     </View>
   );
@@ -78,40 +48,41 @@ const BottomNav = ({ activeTab, onTabPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    height: 60,
+    flexDirection: 'row',
+    height: 70,
+    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: "#ddd",
+    borderTopColor: '#eee',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     paddingHorizontal: 10,
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    width: "100%",
-    zIndex: 1000,
+    left: 0,
+    right: 0,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: -2 },
+    shadowRadius: 5,
   },
-  navButton: {
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
-  activeButton: {
-    borderBottomWidth: 3,
-    borderBottomColor: "#2ecc71",
-  },
-  plusButton: {
-    backgroundColor: "#2ecc71",
+  centerButton: {
     width: 60,
     height: 60,
+    backgroundColor: '#ff5e5e',
     borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    bottom: 15,
-    left: "50%",
-    marginLeft: -30,
-    zIndex: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -35,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 8,
   },
 });
 
