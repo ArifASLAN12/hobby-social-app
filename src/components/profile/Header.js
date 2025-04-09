@@ -10,6 +10,10 @@ const Header = ({ isOwnProfile }) => {
     navigation.navigate('Settings'); // Ayarlar sayfasına yönlendirme
   };
 
+  const goToEditProfile = () => {
+    navigation.navigate('Edit'); // Profil düzenleme sayfasına yönlendirme
+  };
+
   return (
     <View style={styles.container}>
       {/* Kapak Fotoğrafı */}
@@ -34,9 +38,10 @@ const Header = ({ isOwnProfile }) => {
           {!isOwnProfile ? (
             <>
               <ProfileButton
-                backgroundColor="#B0B3B8" // Daha koyu arka plan
+                backgroundColor="#333" // Koyu arka plan
                 iconName="create-outline"
                 text="Profili Düzenle"
+                onPress={goToEditProfile} // Profil düzenle butonuna tıklayınca yönlendirme
               />
               <ProfileButton
                 backgroundColor="#42b72a"
@@ -73,8 +78,8 @@ const Header = ({ isOwnProfile }) => {
 };
 
 // Reusable ProfileButton component
-const ProfileButton = ({ backgroundColor, iconName, text }) => (
-  <TouchableOpacity style={[styles.button, { backgroundColor }]} onPress={() => {}}>
+const ProfileButton = ({ backgroundColor, iconName, text, onPress }) => (
+  <TouchableOpacity style={[styles.button, { backgroundColor }]} onPress={onPress}>
     <Ionicons name={iconName} size={18} color="#fff" />
     <Text style={styles.buttonText}>{text}</Text>
   </TouchableOpacity>
