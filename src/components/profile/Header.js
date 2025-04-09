@@ -7,7 +7,7 @@ const Header = ({ isOwnProfile }) => {
   const navigation = useNavigation(); // navigation hook'u
 
   const goToSettings = () => {
-    navigation.navigate('SettingsScreen'); // Ayarlar sayfasına yönlendirme
+    navigation.navigate('Settings'); // Ayarlar sayfasına yönlendirme
   };
 
   return (
