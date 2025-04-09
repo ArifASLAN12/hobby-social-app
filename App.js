@@ -32,6 +32,7 @@ import CoursesScreen from "./src/screens/MainScreen/CoursesScreen";
 import ProfileScreen from "./src/screens/MainScreen/ProfileScreen";
 import SettingsScreen from "./src/screens/MainScreen/SettingsScreen";
 import EditProfile from "./src/screens/MainScreen/EditProfile";
+import SuggestedPeopleScreen from "./src/screens/MainScreen/SuggestedPeopleScreen";
 
 
 const Stack = createStackNavigator();
@@ -68,6 +69,8 @@ export default function App() {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Edit" component={EditProfile} />
+        <Stack.Screen name="SuggestedPeople" component={SuggestedPeopleScreen} />
+
 
 
         
