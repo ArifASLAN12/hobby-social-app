@@ -1,22 +1,45 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Share, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // navigation için hook
+import { useNavigation } from '@react-navigation/native';
 
 const Header = ({ isOwnProfile }) => {
-  const navigation = useNavigation(); // navigation hook'u
+  const navigation = useNavigation();
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal görünürlüğünü kontrol et
+  const profileLink = 'https://example.com/profil/jokerhanim'; // Profil linki
 
   const goToSettings = () => {
-    navigation.navigate('Settings'); // Ayarlar sayfasına yönlendirme
+    navigation.navigate('Settings');
   };
 
   const goToEditProfile = () => {
-    navigation.navigate('Edit'); // Profil düzenleme sayfasına yönlendirme
+    navigation.navigate('Edit');
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible); // Modal'ı aç/kapat
+  };
+
+  const shareProfile = async () => {
+    try {
+      await Share.share({
+        message: `Check out this profile: ${profileLink}`,
+      });
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const copyLink = async () => {
+    try {
+      await Linking.openURL(`sms:&body=${profileLink}`); // Linki kopyalama işlevselliği (SMS ile göndermeyi simüle eder)
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Kapak Fotoğrafı */}
       <View style={styles.coverWrapper}>
         <Image
           source={{ uri: 'https://picsum.photos/800/300' }}
@@ -24,7 +47,6 @@ const Header = ({ isOwnProfile }) => {
         />
       </View>
 
-      {/* Profil Bölümü */}
       <View style={styles.profileSection}>
         <Image
           source={{ uri: 'https://randomuser.me/api/portraits/women/44.jpg' }}
@@ -33,20 +55,20 @@ const Header = ({ isOwnProfile }) => {
         <Text style={styles.fullName}>Joker Hanım</Text>
         <Text style={styles.username}>@jokerhanim</Text>
 
-        {/* Butonlar */}
         <View style={styles.buttonGroup}>
           {!isOwnProfile ? (
             <>
               <ProfileButton
-                backgroundColor="#333" // Koyu arka plan
+                backgroundColor="#333"
                 iconName="create-outline"
                 text="Profili Düzenle"
-                onPress={goToEditProfile} // Profil düzenle butonuna tıklayınca yönlendirme
+                onPress={goToEditProfile}
               />
               <ProfileButton
                 backgroundColor="#42b72a"
                 iconName="share-social-outline"
                 text="Paylaş"
+                onPress={toggleModal}
               />
             </>
           ) : (
@@ -66,18 +88,38 @@ const Header = ({ isOwnProfile }) => {
         </View>
       </View>
 
-      {/* Ayarlar İkonu */}
       <TouchableOpacity style={styles.settingsIcon} onPress={goToSettings}>
         <Ionicons name="settings-outline" size={24} color="#333" />
       </TouchableOpacity>
 
-      {/* Çizgi ile Header ve HobbyTags'ı ayırma */}
       <View style={styles.separator}></View>
+
+      {/* Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Paylaş</Text>
+            <TouchableOpacity style={styles.modalButton} onPress={shareProfile}>
+              <Text style={styles.modalButtonText}>Sosyal Medyada Paylaş</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalButton} onPress={copyLink}>
+              <Text style={styles.modalButtonText}>Linki Kopyala</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+              <Text style={styles.modalButtonText}>Kapat</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-// Reusable ProfileButton component
 const ProfileButton = ({ backgroundColor, iconName, text, onPress }) => (
   <TouchableOpacity style={[styles.button, { backgroundColor }]} onPress={onPress}>
     <Ionicons name={iconName} size={18} color="#fff" />
@@ -165,8 +207,39 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: '#e0e0e0', // Çizgi rengi
+    backgroundColor: '#e0e0e0',
     marginTop: 20,
+  },
+
+  // Modal Styles
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButton: {
+    backgroundColor: '#42b72a',
+    paddingVertical: 12,
+    marginBottom: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
